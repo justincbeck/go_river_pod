@@ -18,6 +18,8 @@ class LandingScreen extends ConsumerStatefulWidget {
 class LandingScreenState extends ConsumerState<LandingScreen> {
   @override
   Widget build(BuildContext context) {
+    ref.watch(goRiverpodProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Landing Screen'),
@@ -26,15 +28,24 @@ class LandingScreenState extends ConsumerState<LandingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TextButton(
-              onPressed: () async {
-                await ref.read(goRiverpodProvider.notifier).login();
-                if (mounted) {
-                  context.go('/');
-                }
-              },
-              child: const Text('Login'),
-            ),
+            Builder(builder: (context) {
+              if (ref.read(goRiverpodProvider).isLoading) {
+                return const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return TextButton(
+                onPressed: () async {
+                  await ref.read(goRiverpodProvider.notifier).login();
+                  if (mounted) {
+                    context.go('/');
+                  }
+                },
+                child: const Text('Login'),
+              );
+            }),
           ],
         ),
       ),

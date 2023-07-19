@@ -18,6 +18,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 class HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    ref.watch(goRiverpodProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Screen'),
@@ -26,15 +28,24 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TextButton(
-              onPressed: () async {
-                await ref.read(goRiverpodProvider.notifier).logout();
-                if (mounted) {
-                  context.go('/');
-                }
-              },
-              child: const Text('Logout'),
-            ),
+            Builder(builder: (context) {
+              if (ref.read(goRiverpodProvider).isLoading) {
+                return const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return TextButton(
+                onPressed: () async {
+                  await ref.read(goRiverpodProvider.notifier).logout();
+                  if (mounted) {
+                    context.go('/');
+                  }
+                },
+                child: const Text('Logout'),
+              );
+            }),
           ],
         ),
       ),
