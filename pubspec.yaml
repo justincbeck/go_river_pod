@@ -10,11 +10,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.5
+  flutter_riverpod:
   go_router: 8.0.3
   json_annotation:
-  flutter_riverpod:
+  logging: ^1.0.2
   riverpod_annotation:
-  cupertino_icons: ^1.0.5
 
 dev_dependencies:
   flutter_test:
