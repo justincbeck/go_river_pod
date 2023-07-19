@@ -1,7 +1,12 @@
-class Auth {
+class AuthModel {
   final AuthState authState;
 
-  Auth({required this.authState});
+  AuthModel({required this.authState});
+
+  @override
+  String toString() {
+    return authState.toString();
+  }
 }
 
 enum AuthState {

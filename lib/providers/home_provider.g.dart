@@ -1,23 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'go_riverpod.dart';
+part of 'home_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$goRiverpodHash() => r'd9ff36182e566bb922bac1e0c13c1cf5859143ea';
+String _$homeHash() => r'9592fd0e6f97b01eca9c35c14b6a5e689cf29774';
 
-/// See also [GoRiverpod].
-@ProviderFor(GoRiverpod)
-final goRiverpodProvider = AsyncNotifierProvider<GoRiverpod, Auth>.internal(
-  GoRiverpod.new,
-  name: r'goRiverpodProvider',
+/// See also [Home].
+@ProviderFor(Home)
+final homeProvider = AsyncNotifierProvider<Home, HomeModel?>.internal(
+  Home.new,
+  name: r'homeProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$goRiverpodHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$homeHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$GoRiverpod = AsyncNotifier<Auth>;
+typedef _$Home = AsyncNotifier<HomeModel?>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

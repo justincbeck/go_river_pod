@@ -1,7 +1,6 @@
 // private navigators
 import 'package:flutter/material.dart';
-import 'package:go_riverpod_poc/models/auth_state.dart';
-import 'package:go_riverpod_poc/providers/go_riverpod.dart';
+import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:go_riverpod_poc/screens/home_screen.dart';
 import 'package:go_riverpod_poc/screens/landing_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -20,9 +19,10 @@ class Router extends _$Router {
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
       redirect: (context, state) async {
-        final auth = await ref.read(goRiverpodProvider.future);
-        if (auth.authState == AuthState.loggedIn) {
-          return '/home';
+        print('redirecting');
+        final user = ref.watch(userProvider);
+        if (user.hasValue && user.requireValue != null) {
+          return '/dashboard';
         }
 
         return null;
@@ -42,7 +42,7 @@ class Router extends _$Router {
           ),
         ),
         GoRoute(
-          path: '/home',
+          path: '/dashboard',
           pageBuilder: (context, state) => CustomTransitionPage(
             child: const HomeScreen(),
             transitionsBuilder:
