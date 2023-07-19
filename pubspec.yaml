@@ -1,0 +1,28 @@
+name: go_riverpod_poc
+description: A new Flutter project.
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  go_router: 8.0.3
+  json_annotation:
+  flutter_riverpod:
+  riverpod_annotation:
+  cupertino_icons: ^1.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner:
+  flutter_lints: ^2.0.1
+  json_serializable:
+  riverpod_generator:
+
+flutter:
+  uses-material-design: true
