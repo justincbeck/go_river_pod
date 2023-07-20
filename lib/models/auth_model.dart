@@ -1,15 +1,21 @@
 class AuthModel {
   final AuthState authState;
+  final String? username;
 
-  AuthModel({required this.authState});
+  AuthModel({
+    this.username,
+    required this.authState,
+  });
 
   @override
   String toString() {
-    return authState.toString();
+    return '$username, ${authState.toString()}';
   }
 }
 
 enum AuthState {
+  loggingIn,
+  signingUp,
   loggedIn,
   loggedOut,
 }

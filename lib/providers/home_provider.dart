@@ -1,7 +1,8 @@
 import 'package:go_riverpod_poc/helpers/utils.dart';
 import 'package:go_riverpod_poc/models/auth_model.dart';
+import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:go_riverpod_poc/models/home_model.dart';
-import 'package:go_riverpod_poc/providers/home_error_provider.dart';
+import 'package:go_riverpod_poc/providers/address_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -16,31 +17,41 @@ class Home extends _$Home {
   @override
   FutureOr<HomeModel?> build() async {
     logger.info('build()');
-    final auth = await ref.watch(authProvider.future);
-
-    if (auth.authState == AuthState.loggedIn) {
-      logger.info('logged in => getting home');
-      await fetchHome();
-      return state.value;
-    } else {
-      return null;
-    }
+    return ref.watch(authProvider).when(
+          data: (auth) {
+            final address = ref.read(addressProvider);
+            if (auth.authState == AuthState.signingUp && address != null) {
+              return _createHome();
+            }
+            return null;
+          },
+          error: (error, stack) => null,
+          loading: () => null,
+        );
   }
 
-  FutureOr<void> fetchHome() async {
+  FutureOr<void> createHome() async {
+    logger.info('fetchHome()');
     state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      return _createHome();
+    });
+  }
 
-    final homeError = ref.read(homeErrorProvider);
-    if (homeError != null) {
-      logger.info(homeError);
-      throw homeError;
+  FutureOr<HomeModel?> _createHome() async {
+    await Future.delayed(Duration(milliseconds: getFakeMillis()));
+    final address = ref.read(addressProvider);
+    if (address?.toLowerCase() == '123 cherry ave') {
+      ref.read(addressProvider.notifier).reset();
+      return Future.value(HomeModel(name: address!));
     }
 
-    await Future.delayed(Duration(milliseconds: getFakeMillis()));
-    state = AsyncValue.data(HomeModel(name: 'Home'));
+    final homeError = ErrorModel(message: 'Invalid address');
+    logger.shout(homeError);
+    throw homeError;
   }
 
   void reset() {
-    state = const AsyncValue.data(null);
+    ref.invalidateSelf();
   }
 }

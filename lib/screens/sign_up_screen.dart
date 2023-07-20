@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
-import 'package:go_riverpod_poc/providers/home_provider.dart';
-import 'package:go_riverpod_poc/providers/user_error_provider.dart';
-import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,22 +15,21 @@ class SignUpScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => SignUpScreenState();
 }
 
-/// The state for DetailsScreen
 class SignUpScreenState extends ConsumerState<SignUpScreen> {
+  final textEditingController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    ref.watch(authProvider);
-    ref.watch(homeProvider);
-    final user = ref.watch(userProvider);
+    final auth = ref.watch(authProvider);
 
-    if (user.hasError) {
+    if (auth is AsyncError) {
       Future.delayed(const Duration(milliseconds: 0), () {
         showDialog(
           context: context,
           builder: (_) {
             return AlertDialog(
-              title: const Text('Error'),
-              content: Text(user.error!.toString()),
+              title: const Text('User Error'),
+              content: Text(auth.error!.toString()),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -63,43 +58,45 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      ref.read(userErrorProvider.notifier).reset();
-                      final user = ref.read(userProvider);
-                      if (user.hasError) {
-                        await ref.read(userProvider.notifier).fetchUser();
-                        return;
-                      }
-                      await ref.read(authProvider.notifier).login();
-                    },
-                    child: const Text('To /dashboard (success)'),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: textEditingController,
+                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      ref
-                          .read(userErrorProvider.notifier)
-                          .setError(ErrorModel(message: 'User: BOOM!'));
-                      await ref.read(authProvider.notifier).login();
-                    },
-                    child: const Text('To /dashboard (error)'),
+                  const SizedBox(
+                    height: 16,
                   ),
-                  Builder(builder: (context) {
-                    if (ref.read(authProvider).isLoading) {
-                      return const SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          /// if the text editing controller is empty, do nothing
+                          if (textEditingController.text.isEmpty) return;
 
-                    return TextButton(
-                      onPressed: () {
-                        context.go('/');
-                      },
-                      child: const Text('Cancel'),
-                    );
-                  }),
+                          /// attempt to login using the presented username
+                          await ref
+                              .read(authProvider.notifier)
+                              .signUp(textEditingController.text);
+
+                          if (mounted) {
+                            context.go('/');
+                          }
+                        },
+                        child: const Text('Submit Username'),
+                      ),
+                      const SizedBox(
+                        width: 24,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.go('/');
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

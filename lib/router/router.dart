@@ -1,7 +1,9 @@
 // private navigators
 import 'package:flutter/material.dart';
+import 'package:go_riverpod_poc/models/auth_model.dart';
+import 'package:go_riverpod_poc/providers/address_provider.dart';
+import 'package:go_riverpod_poc/providers/auth_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
-import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:go_riverpod_poc/screens/create_home_screen.dart';
 import 'package:go_riverpod_poc/screens/dashboard_screen.dart';
 import 'package:go_riverpod_poc/screens/landing_screen.dart';
@@ -20,38 +22,47 @@ class Router extends _$Router {
 
   @override
   GoRouter build() {
+    ref.listen(addressProvider, (previous, next) {
+      state.go('/');
+    });
+    ref.listen(authProvider, (previous, next) {
+      if (!next.isLoading) state.go('/');
+    });
+    ref.listen(homeProvider, (previous, next) {
+      if (!next.isLoading) state.go('/');
+    });
+
     return GoRouter(
       initialLocation: '/',
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
       redirect: (context, state) async {
-        final home = ref.watch(homeProvider);
-        final user = ref.watch(userProvider);
+        final address = ref.read(addressProvider);
+        final auth = ref.read(authProvider);
+        final home = ref.read(homeProvider);
 
-        // if (auth.value?.authState == AuthState.loggedOut) {
-        //   return '/';
-        // }
-
-        if (home.isLoading || user.isLoading) {
-          logger.info('home.isLoading || user.isLoading');
-          return '/loading';
-        }
-
-        if (home.hasError) {
-          logger.info('home.hasError');
-          return '/create_home';
-        }
-
-        if (user.hasError) {
-          logger.info('user.hasError');
-          return '/sign_up';
-        }
-
-        if (home.hasValue &&
-            home.requireValue != null &&
-            user.hasValue &&
-            user.requireValue != null) {
+        // If we're just
+        if (auth.requireValue.authState == AuthState.loggedIn) {
           return '/dashboard';
+        }
+
+        if (auth.requireValue.authState == AuthState.signingUp) {
+          if (auth.isLoading || home.isLoading) {
+            return '/loading';
+          }
+          if (address == null && home.value == null || home.hasError) {
+            return '/enter_address';
+          }
+          if (auth.requireValue.username == null) {
+            return '/sign_up';
+          }
+          if (auth.requireValue.username != null && home.hasValue) {
+            return '/dashboard';
+          }
+        }
+
+        if (auth.requireValue.authState == AuthState.loggedOut) {
+          return '/';
         }
 
         return null;
@@ -64,7 +75,7 @@ class Router extends _$Router {
           ),
           routes: <RouteBase>[
             GoRoute(
-              path: 'create_home',
+              path: 'enter_address',
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: CreateHomeScreen(),
               ),

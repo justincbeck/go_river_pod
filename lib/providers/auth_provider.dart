@@ -1,5 +1,6 @@
 import 'package:go_riverpod_poc/helpers/utils.dart';
 import 'package:go_riverpod_poc/models/auth_model.dart';
+import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -15,12 +16,26 @@ class Auth extends _$Auth {
     return AuthModel(authState: AuthState.loggedOut);
   }
 
-  Future<void> login() async {
-    logger.info('login()');
+  void setSigningUp() {
+    logger.info('setSigningUp()');
+    state = AsyncData(AuthModel(authState: AuthState.signingUp));
+  }
+
+  Future<void> signUp(String username) async {
+    logger.info('signUp()');
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await Future.delayed(Duration(milliseconds: getFakeMillis()));
-      return Future.value(AuthModel(authState: AuthState.loggedIn));
+      if (['bill', 'frank'].contains(username.toLowerCase())) {
+        return AuthModel(
+          username: username,
+          authState: AuthState.signingUp,
+        );
+      }
+
+      final authError = ErrorModel(message: 'Invalid username');
+      logger.shout(authError);
+      throw authError;
     });
   }
 
@@ -34,6 +49,6 @@ class Auth extends _$Auth {
   }
 
   void reset() {
-    state = AsyncValue.data(AuthModel(authState: AuthState.loggedOut));
+    ref.invalidateSelf();
   }
 }

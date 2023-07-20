@@ -1,27 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_riverpod_poc/models/error_model.dart';
-import 'package:go_riverpod_poc/providers/home_error_provider.dart';
+import 'package:go_riverpod_poc/providers/address_provider.dart';
+import 'package:go_riverpod_poc/providers/auth_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
 
-class CreateHomeScreen extends ConsumerWidget {
+class CreateHomeScreen extends ConsumerStatefulWidget {
   const CreateHomeScreen({
     Key? key,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      CreateHomeScreenState();
+}
+
+class CreateHomeScreenState extends ConsumerState<CreateHomeScreen> {
+  final textEditingController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
     final home = ref.watch(homeProvider);
 
-    if (home.hasError) {
+    if (home is AsyncError) {
       Future.delayed(const Duration(milliseconds: 0), () {
         showDialog(
           context: context,
           builder: (_) {
             return AlertDialog(
-              title: const Text('Error'),
+              title: const Text('Home Error'),
               content: Text(home.error!.toString()),
               actions: [
                 TextButton(
@@ -51,32 +59,49 @@ class CreateHomeScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      ref.read(homeErrorProvider.notifier).reset();
-                      final home = ref.read(homeProvider);
-                      if (home.hasError) {
-                        await ref.read(homeProvider.notifier).fetchHome();
-                        return;
-                      }
-                      context.go('/sign_up');
-                    },
-                    child: const Text('To /sign_up (success)'),
+                  SizedBox(
+                    width: 300,
+                    child: TextField(
+                      controller: textEditingController,
+                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      ref
-                          .read(homeErrorProvider.notifier)
-                          .setError(ErrorModel(message: 'BOOM!'));
-                      context.go('/sign_up');
-                    },
-                    child: const Text('To /sign_up (error)'),
+                  const SizedBox(
+                    height: 16,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      context.go('/');
-                    },
-                    child: const Text('Cancel'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          /// if the text editing controller is empty, do nothing
+                          if (textEditingController.text.isEmpty) return;
+
+                          /// set the address in the address provider (for later submission)
+                          ref
+                              .read(addressProvider.notifier)
+                              .setAddress(textEditingController.text);
+
+                          /// get the home from the home provider
+                          final home = ref.read(homeProvider);
+
+                          /// if the home has an error, we've been here before and we're
+                          /// trying again, so call fetch home again (will use updated address)
+                          if (home.hasError) {
+                            await ref.read(homeProvider.notifier).createHome();
+                          }
+                        },
+                        child: const Text('Submit Address'),
+                      ),
+                      const SizedBox(
+                        width: 24,
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await ref.read(authProvider.notifier).logout();
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                    ],
                   ),
                 ],
               ),

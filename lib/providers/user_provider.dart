@@ -1,8 +1,8 @@
 import 'package:go_riverpod_poc/helpers/utils.dart';
 import 'package:go_riverpod_poc/models/auth_model.dart';
+import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:go_riverpod_poc/models/user_model.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
-import 'package:go_riverpod_poc/providers/user_error_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -15,31 +15,41 @@ class User extends _$User {
   @override
   FutureOr<UserModel?> build() async {
     logger.info('build()');
-    final auth = await ref.watch(authProvider.future);
+    return ref.watch(authProvider).when(
+          data: (auth) {
+            if (auth.authState == AuthState.loggedIn) {
+              return _fetchUser();
+            }
 
-    if (auth.authState == AuthState.loggedIn) {
-      logger.info('logged in => getting user');
-      await fetchUser();
-      return state.value;
-    } else {
-      return null;
-    }
+            return null;
+          },
+          error: (error, stack) => null,
+          loading: () => null,
+        );
   }
 
   FutureOr<void> fetchUser() async {
+    logger.info('fetchUser()');
     state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      return _fetchUser();
+    });
+  }
 
-    final userError = ref.read(userErrorProvider);
-    if (userError != null) {
-      logger.info(userError);
-      throw userError;
+  FutureOr<UserModel?> _fetchUser() async {
+    await Future.delayed(Duration(milliseconds: getFakeMillis()));
+    final auth = ref.read(authProvider);
+    if ([AuthState.loggedIn, AuthState.signingUp]
+        .contains(auth.value?.authState)) {
+      return Future.value(UserModel(name: auth.value!.username!));
     }
 
-    await Future.delayed(Duration(milliseconds: getFakeMillis()));
-    state = AsyncValue.data(UserModel(name: 'Randal'));
+    final userError = ErrorModel(message: 'Not authenticated');
+    logger.shout(userError);
+    throw userError;
   }
 
   void reset() {
-    state = const AsyncValue.data(null);
+    ref.invalidateSelf();
   }
 }

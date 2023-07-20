@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_riverpod_poc/providers/auth_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
 
-class LandingScreen extends StatelessWidget {
+class LandingScreen extends ConsumerWidget {
   const LandingScreen({
     Key? key,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Landing Screen'),
@@ -24,9 +26,17 @@ class LandingScreen extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      context.go('/create_home');
+                      ref.read(authProvider.notifier).setSigningUp();
+                      context.go('/enter_address');
                     },
-                    child: const Text('To /create_home'),
+                    child: const Text('Sign Up'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.go('/login');
+                    },
+                    child: const Text('Login'),
                   ),
                 ],
               ),

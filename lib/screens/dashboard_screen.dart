@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
+import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
-import 'package:go_router/go_router.dart';
+import 'package:go_riverpod_poc/widgets/user_display.dart';
 
 /// The details screen for either the A or B screen.
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -17,6 +18,14 @@ class DashboardScreen extends ConsumerStatefulWidget {
 
 /// The state for DetailsScreen
 class DashboardScreenState extends ConsumerState<DashboardScreen> {
+  @override
+  void initState() {
+    Future.microtask(() {
+      ref.read(userProvider.notifier).fetchUser();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.watch(authProvider);
@@ -35,12 +44,11 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const UserDisplay(),
+                  const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
                       await ref.read(authProvider.notifier).logout();
-                      if (mounted) {
-                        context.go('/');
-                      }
                     },
                     child: const Text('Logout'),
                   ),
