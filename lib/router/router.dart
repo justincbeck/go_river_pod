@@ -5,6 +5,7 @@ import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:go_riverpod_poc/screens/create_home_screen.dart';
 import 'package:go_riverpod_poc/screens/dashboard_screen.dart';
 import 'package:go_riverpod_poc/screens/landing_screen.dart';
+import 'package:go_riverpod_poc/screens/loading_screen.dart';
 import 'package:go_riverpod_poc/screens/sign_up_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
@@ -27,22 +28,32 @@ class Router extends _$Router {
         final home = ref.watch(homeProvider);
         final user = ref.watch(userProvider);
 
+        // if (auth.value?.authState == AuthState.loggedOut) {
+        //   return '/';
+        // }
+
         if (home.isLoading || user.isLoading) {
           logger.info('home.isLoading || user.isLoading');
-          return state.location;
+          return '/loading';
         }
 
-        if (home.hasValue && home.requireValue != null) {
-          logger.info('home.hasValue && home.requireValue != null');
-          return '/dashboard';
-        }
-
-        if (user.hasValue && user.requireValue != null) {
-          logger.info('user.hasValue && user.requireValue != null');
+        if (home.hasError) {
+          logger.info('home.hasError');
           return '/create_home';
         }
 
-        logger.info('no home or user');
+        if (user.hasError) {
+          logger.info('user.hasError');
+          return '/sign_up';
+        }
+
+        if (home.hasValue &&
+            home.requireValue != null &&
+            user.hasValue &&
+            user.requireValue != null) {
+          return '/dashboard';
+        }
+
         return null;
       },
       routes: [
@@ -70,6 +81,12 @@ class Router extends _$Router {
           path: '/dashboard',
           pageBuilder: (context, state) => const NoTransitionPage(
             child: DashboardScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/loading',
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: LoadingScreen(),
           ),
         ),
       ],

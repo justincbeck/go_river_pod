@@ -1,3 +1,4 @@
+import 'package:go_riverpod_poc/helpers/utils.dart';
 import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,7 +19,7 @@ class Auth extends _$Auth {
     logger.info('login()');
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(Duration(milliseconds: getFakeMillis()));
       return Future.value(AuthModel(authState: AuthState.loggedIn));
     });
   }
@@ -27,7 +28,7 @@ class Auth extends _$Auth {
     logger.info('logout()');
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(Duration(milliseconds: getFakeMillis()));
       return Future.value(AuthModel(authState: AuthState.loggedOut));
     });
   }

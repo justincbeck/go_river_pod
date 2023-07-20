@@ -1,3 +1,4 @@
+import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,13 +22,4 @@ class HomeError extends _$HomeError {
   void reset() {
     state = null;
   }
-}
-
-class ErrorModel extends Object {
-  final String message;
-
-  ErrorModel({required this.message});
-
-  @override
-  String toString() => message;
 }

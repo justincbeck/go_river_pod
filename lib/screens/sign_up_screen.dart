@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
-import 'package:go_riverpod_poc/providers/home_error_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
+import 'package:go_riverpod_poc/providers/user_error_provider.dart';
+import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,6 +25,29 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
   Widget build(BuildContext context) {
     ref.watch(authProvider);
     ref.watch(homeProvider);
+    final user = ref.watch(userProvider);
+
+    if (user.hasError) {
+      Future.delayed(const Duration(milliseconds: 0), () {
+        showDialog(
+          context: context,
+          builder: (_) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: Text(user.error!.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      });
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -40,24 +65,24 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
                 children: [
                   ElevatedButton(
                     onPressed: () async {
+                      ref.read(userErrorProvider.notifier).reset();
+                      final user = ref.read(userProvider);
+                      if (user.hasError) {
+                        await ref.read(userProvider.notifier).fetchUser();
+                        return;
+                      }
                       await ref.read(authProvider.notifier).login();
-                      // if (mounted) {
-                      //   context.go('/');
-                      // }
                     },
-                    child: const Text('Sign Up (success)'),
+                    child: const Text('To /dashboard (success)'),
                   ),
                   ElevatedButton(
                     onPressed: () async {
                       ref
-                          .read(homeErrorProvider.notifier)
-                          .setError(ErrorModel(message: 'Home: BOOM!'));
+                          .read(userErrorProvider.notifier)
+                          .setError(ErrorModel(message: 'User: BOOM!'));
                       await ref.read(authProvider.notifier).login();
-                      // if (mounted) {
-                      //   context.go('/');
-                      // }
                     },
-                    child: const Text('Sign Up (bad user)'),
+                    child: const Text('To /dashboard (error)'),
                   ),
                   Builder(builder: (context) {
                     if (ref.read(authProvider).isLoading) {

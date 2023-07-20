@@ -1,3 +1,4 @@
+import 'package:go_riverpod_poc/helpers/utils.dart';
 import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/models/home_model.dart';
 import 'package:go_riverpod_poc/providers/home_error_provider.dart';
@@ -19,18 +20,24 @@ class Home extends _$Home {
 
     if (auth.authState == AuthState.loggedIn) {
       logger.info('logged in => getting home');
-      await Future.delayed(const Duration(seconds: 2));
-      final homeError = ref.read(homeErrorProvider);
-
-      if (homeError != null) {
-        logger.info(homeError);
-        throw homeError;
-      }
-
-      return HomeModel(name: 'Home');
+      await fetchHome();
+      return state.value;
     } else {
       return null;
     }
+  }
+
+  FutureOr<void> fetchHome() async {
+    state = const AsyncValue.loading();
+
+    final homeError = ref.read(homeErrorProvider);
+    if (homeError != null) {
+      logger.info(homeError);
+      throw homeError;
+    }
+
+    await Future.delayed(Duration(milliseconds: getFakeMillis()));
+    state = AsyncValue.data(HomeModel(name: 'Home'));
   }
 
   void reset() {

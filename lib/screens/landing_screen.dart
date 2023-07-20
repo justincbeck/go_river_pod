@@ -26,7 +26,7 @@ class LandingScreen extends StatelessWidget {
                     onPressed: () {
                       context.go('/create_home');
                     },
-                    child: const Text('Sign Up'),
+                    child: const Text('To /create_home'),
                   ),
                 ],
               ),
