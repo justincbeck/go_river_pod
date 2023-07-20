@@ -19,44 +19,29 @@ class Router extends _$Router {
 
   @override
   GoRouter build() {
-    final home = ref.watch(homeProvider);
-    final user = ref.watch(userProvider);
-
-    if (home.hasError) {
-      logger.info('home error => ${home.error}');
-    }
-
-    if (user.hasError) {
-      logger.info('user error => ${user.error}');
-    }
-
     return GoRouter(
       initialLocation: '/',
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
       redirect: (context, state) async {
+        final home = ref.watch(homeProvider);
+        final user = ref.watch(userProvider);
+
         if (home.isLoading || user.isLoading) {
-          logger.info('loading');
+          logger.info('home.isLoading || user.isLoading');
           return state.location;
         }
 
         if (home.hasValue && home.requireValue != null) {
-          logger.info('has home');
+          logger.info('home.hasValue && home.requireValue != null');
           return '/dashboard';
         }
 
         if (user.hasValue && user.requireValue != null) {
-          logger.info('has user');
+          logger.info('user.hasValue && user.requireValue != null');
           return '/create_home';
         }
 
-        // if (home.hasError) {
-        //   return '/create_home';
-        // }
-
-        // if (user.hasError) {
-        //   return '/sign_up';
-        // }
         logger.info('no home or user');
         return null;
       },

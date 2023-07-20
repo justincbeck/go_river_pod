@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_riverpod_poc/providers/home_error_provider.dart';
+import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
 
 class CreateHomeScreen extends ConsumerWidget {
@@ -16,13 +17,13 @@ class CreateHomeScreen extends ConsumerWidget {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: 200,
+              height: 300,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: () {
@@ -39,14 +40,18 @@ class CreateHomeScreen extends ConsumerWidget {
                     },
                     child: const Text('Next Step (bad home)'),
                   ),
+                  TextButton(
+                    onPressed: () {
+                      context.go('/');
+                    },
+                    child: const Text('Cancel'),
+                  ),
                 ],
               ),
             ),
-            TextButton(
-              onPressed: () {
-                context.go('/');
-              },
-              child: const Text('Cancel'),
+            const SizedBox(
+              height: 200,
+              child: Debug(),
             ),
           ],
         ),

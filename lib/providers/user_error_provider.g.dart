@@ -6,7 +6,7 @@ part of 'user_error_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$userErrorHash() => r'a8452bae01a0f511fb06141d98854fc77a2e7e2d';
+String _$userErrorHash() => r'bd071bb7c7ed0727223899f03f255ca3471924a7';
 
 /// See also [UserError].
 @ProviderFor(UserError)

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
 
 class LandingScreen extends StatelessWidget {
@@ -14,13 +15,25 @@ class LandingScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                context.go('/create_home');
-              },
-              child: const Text('Sign Up'),
+            SizedBox(
+              height: 300,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      context.go('/create_home');
+                    },
+                    child: const Text('Sign Up'),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 200,
+              child: Debug(),
             ),
           ],
         ),

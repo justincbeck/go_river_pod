@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
-import 'package:go_riverpod_poc/providers/home_provider.dart';
-import 'package:go_riverpod_poc/providers/user_provider.dart';
+import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
 
 /// The details screen for either the A or B screen.
@@ -28,16 +27,14 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
               width: MediaQuery.of(context).size.width,
               height: 300,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(ref.read(authProvider).toString()),
-                  Text(ref.watch(homeProvider).toString()),
-                  Text(ref.watch(userProvider).toString()),
                   ElevatedButton(
                     onPressed: () async {
                       await ref.read(authProvider.notifier).logout();
@@ -49,6 +46,10 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(
+              height: 200,
+              child: Debug(),
             ),
           ],
         ),

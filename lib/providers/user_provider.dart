@@ -11,7 +11,7 @@ class User extends _$User {
 
   @override
   FutureOr<UserModel?> build() async {
-    logger.info('building user');
+    logger.info('build()');
     final home = await ref.watch(homeProvider.future);
 
     if (home != null) {
@@ -22,5 +22,9 @@ class User extends _$User {
     } else {
       return null;
     }
+  }
+
+  void reset() {
+    state = const AsyncValue.data(null);
   }
 }

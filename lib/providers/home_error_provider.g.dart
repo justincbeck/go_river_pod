@@ -6,7 +6,7 @@ part of 'home_error_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$homeErrorHash() => r'6673153486ae0df8b423af6eee0f021f86295dd7';
+String _$homeErrorHash() => r'eafe258537b8a21434df5cc710bcb7a536af349d';
 
 /// See also [HomeError].
 @ProviderFor(HomeError)
