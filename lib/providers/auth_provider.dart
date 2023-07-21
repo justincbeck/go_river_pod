@@ -16,9 +16,31 @@ class Auth extends _$Auth {
     return AuthModel(authState: AuthState.loggedOut);
   }
 
-  void setSigningUp() {
-    logger.info('setSigningUp()');
-    state = AsyncData(AuthModel(authState: AuthState.signingUp));
+  void setAuthState(AuthState authState) {
+    logger.info('setAuthState()');
+    state = AsyncValue.data(
+      state.value!.copyWith(
+        authState: authState,
+      ),
+    );
+  }
+
+  Future<void> login(String username) async {
+    logger.info('login()');
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      await Future.delayed(Duration(milliseconds: getFakeMillis()));
+      if (['bill', 'frank'].contains(username.toLowerCase())) {
+        return AuthModel(
+          username: username,
+          authState: AuthState.loggedIn,
+        );
+      }
+
+      final authError = ErrorModel(message: 'Invalid username');
+      logger.shout(authError);
+      throw authError;
+    });
   }
 
   Future<void> signUp(String username) async {
@@ -41,6 +63,7 @@ class Auth extends _$Auth {
 
   Future<void> logout() async {
     logger.info('logout()');
+    setAuthState(AuthState.loggingOut);
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await Future.delayed(Duration(milliseconds: getFakeMillis()));

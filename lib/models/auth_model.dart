@@ -1,21 +1,23 @@
-class AuthModel {
-  final AuthState authState;
-  final String? username;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  AuthModel({
-    this.username,
-    required this.authState,
-  });
+part 'auth_model.freezed.dart';
+part 'auth_model.g.dart';
 
-  @override
-  String toString() {
-    return '$username, ${authState.toString()}';
-  }
+@freezed
+class AuthModel with _$AuthModel {
+  factory AuthModel({
+    String? username,
+    required AuthState authState,
+  }) = _AuthModel;
+
+  factory AuthModel.fromJson(Map<String, Object?> json) =>
+      _$AuthModelFromJson(json);
 }
 
 enum AuthState {
-  loggingIn,
   signingUp,
+  loggingIn,
   loggedIn,
+  loggingOut,
   loggedOut,
 }

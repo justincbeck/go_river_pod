@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +27,9 @@ class LandingScreen extends ConsumerWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      ref.read(authProvider.notifier).setSigningUp();
+                      ref
+                          .read(authProvider.notifier)
+                          .setAuthState(AuthState.signingUp);
                       context.go('/enter_address');
                     },
                     child: const Text('Sign Up'),
@@ -34,6 +37,9 @@ class LandingScreen extends ConsumerWidget {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
+                      ref
+                          .read(authProvider.notifier)
+                          .setAuthState(AuthState.loggingIn);
                       context.go('/login');
                     },
                     child: const Text('Login'),

@@ -4,10 +4,18 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     {
       "name": "iPhone 13 Pro",
       "program": "lib/main.dart",
       "deviceId": "1A72319B-0D20-4DF2-AC66-E25C10BB4854",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "chrome",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
       "request": "launch",
       "type": "dart"
     }

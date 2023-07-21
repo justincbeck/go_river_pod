@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.5
   flutter_riverpod:
+  freezed_annotation:
   go_router: 8.0.3
   json_annotation:
   logging: ^1.0.2
@@ -22,6 +23,7 @@ dev_dependencies:
     sdk: flutter
   build_runner:
   flutter_lints: ^2.0.1
+  freezed:
   json_serializable:
   riverpod_generator:
 

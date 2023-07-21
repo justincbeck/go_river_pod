@@ -8,6 +8,7 @@ import 'package:go_riverpod_poc/screens/create_home_screen.dart';
 import 'package:go_riverpod_poc/screens/dashboard_screen.dart';
 import 'package:go_riverpod_poc/screens/landing_screen.dart';
 import 'package:go_riverpod_poc/screens/loading_screen.dart';
+import 'package:go_riverpod_poc/screens/login_screen.dart';
 import 'package:go_riverpod_poc/screens/sign_up_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
@@ -41,12 +42,26 @@ class Router extends _$Router {
         final auth = ref.read(authProvider);
         final home = ref.read(homeProvider);
 
-        // If we're just
-        if (auth.requireValue.authState == AuthState.loggedIn) {
+        if ([AuthState.loggingIn].contains(auth.requireValue.authState)) {
+          if (auth.isLoading) {
+            return '/loading';
+          }
+          return '/login';
+        }
+
+        if ([AuthState.loggedIn].contains(auth.requireValue.authState)) {
           return '/dashboard';
         }
 
-        if (auth.requireValue.authState == AuthState.signingUp) {
+        if ([AuthState.loggingOut].contains(auth.requireValue.authState)) {
+          return '/loading';
+        }
+
+        if ([AuthState.loggedOut].contains(auth.requireValue.authState)) {
+          return '/';
+        }
+
+        if ([AuthState.signingUp].contains(auth.requireValue.authState)) {
           if (auth.isLoading || home.isLoading) {
             return '/loading';
           }
@@ -59,10 +74,6 @@ class Router extends _$Router {
           if (auth.requireValue.username != null && home.hasValue) {
             return '/dashboard';
           }
-        }
-
-        if (auth.requireValue.authState == AuthState.loggedOut) {
-          return '/';
         }
 
         return null;
@@ -84,6 +95,12 @@ class Router extends _$Router {
               path: 'sign_up',
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: SignUpScreen(),
+              ),
+            ),
+            GoRoute(
+              path: 'login',
+              pageBuilder: (context, state) => const NoTransitionPage(
+                child: LoginScreen(),
               ),
             ),
           ],

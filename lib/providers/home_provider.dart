@@ -22,6 +22,8 @@ class Home extends _$Home {
             final address = ref.read(addressProvider);
             if (auth.authState == AuthState.signingUp && address != null) {
               return _createHome();
+            } else if (auth.authState == AuthState.loggedIn) {
+              return _fetchHome();
             }
             return null;
           },
@@ -49,6 +51,11 @@ class Home extends _$Home {
     final homeError = ErrorModel(message: 'Invalid address');
     logger.shout(homeError);
     throw homeError;
+  }
+
+  FutureOr<HomeModel?> _fetchHome() async {
+    await Future.delayed(Duration(milliseconds: getFakeMillis()));
+    return Future.value(HomeModel(name: '123 cherry ave'));
   }
 
   void reset() {
