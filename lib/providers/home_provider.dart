@@ -16,6 +16,8 @@ class Home extends _$Home {
 
   @override
   FutureOr<HomeModel?> build() async {
+    /// build is triggered based on changes
+    /// happening in the auth provider
     logger.info('build()');
     return ref.watch(authProvider).when(
           data: (auth) {

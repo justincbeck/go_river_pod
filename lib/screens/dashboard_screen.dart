@@ -5,9 +5,7 @@ import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_riverpod_poc/widgets/user_display.dart';
 
-/// The details screen for either the A or B screen.
 class DashboardScreen extends ConsumerStatefulWidget {
-  /// Constructs a [DetailsScreen].
   const DashboardScreen({
     Key? key,
   }) : super(key: key);
@@ -16,7 +14,6 @@ class DashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => DashboardScreenState();
 }
 
-/// The state for DetailsScreen
 class DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   void initState() {

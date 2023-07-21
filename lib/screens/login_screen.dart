@@ -75,10 +75,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           await ref
                               .read(authProvider.notifier)
                               .login(textEditingController.text);
-
-                          if (mounted) {
-                            context.go('/');
-                          }
                         },
                         child: const Text('Submit Username'),
                       ),

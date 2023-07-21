@@ -4,7 +4,7 @@ import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/providers/address_provider.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
-import 'package:go_riverpod_poc/screens/create_home_screen.dart';
+import 'package:go_riverpod_poc/screens/enter_address_screen.dart';
 import 'package:go_riverpod_poc/screens/dashboard_screen.dart';
 import 'package:go_riverpod_poc/screens/landing_screen.dart';
 import 'package:go_riverpod_poc/screens/loading_screen.dart';
@@ -23,6 +23,8 @@ class Router extends _$Router {
 
   @override
   GoRouter build() {
+    /// Setting up listeners so that if any of these providers
+    /// have a change, we trigger a navigation redirect (if necessary)
     ref.listen(addressProvider, (previous, next) {
       state.go('/');
     });
@@ -38,6 +40,8 @@ class Router extends _$Router {
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
       redirect: (context, state) async {
+        /// All of this redirect logic is used for auth (login and signup)
+        /// Other redirect logic will be done at the route level
         final address = ref.read(addressProvider);
         final auth = ref.read(authProvider);
         final home = ref.read(homeProvider);
@@ -65,7 +69,7 @@ class Router extends _$Router {
           if (auth.isLoading || home.isLoading) {
             return '/loading';
           }
-          if (address == null && home.value == null || home.hasError) {
+          if ((address == null && home.value == null) || home.hasError) {
             return '/enter_address';
           }
           if (auth.requireValue.username == null) {
@@ -88,7 +92,7 @@ class Router extends _$Router {
             GoRoute(
               path: 'enter_address',
               pageBuilder: (context, state) => const NoTransitionPage(
-                child: CreateHomeScreen(),
+                child: EnterAddressScreen(),
               ),
             ),
             GoRoute(

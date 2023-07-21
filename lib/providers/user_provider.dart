@@ -14,6 +14,8 @@ class User extends _$User {
 
   @override
   FutureOr<UserModel?> build() async {
+    /// build is triggered based on changes
+    /// happening in the auth provider
     logger.info('build()');
     return ref.watch(authProvider).when(
           data: (auth) {

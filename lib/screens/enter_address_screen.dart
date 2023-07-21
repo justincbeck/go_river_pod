@@ -6,17 +6,17 @@ import 'package:go_riverpod_poc/providers/home_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
 
-class CreateHomeScreen extends ConsumerStatefulWidget {
-  const CreateHomeScreen({
+class EnterAddressScreen extends ConsumerStatefulWidget {
+  const EnterAddressScreen({
     Key? key,
   }) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      CreateHomeScreenState();
+      _EnterAddressScreenState();
 }
 
-class CreateHomeScreenState extends ConsumerState<CreateHomeScreen> {
+class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
   final textEditingController = TextEditingController();
 
   @override

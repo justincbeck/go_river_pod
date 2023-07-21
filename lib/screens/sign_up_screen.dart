@@ -4,9 +4,7 @@ import 'package:go_riverpod_poc/providers/auth_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
 
-/// The details screen for either the A or B screen.
 class SignUpScreen extends ConsumerStatefulWidget {
-  /// Constructs a [DetailsScreen].
   const SignUpScreen({
     Key? key,
   }) : super(key: key);
@@ -79,10 +77,6 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
                           await ref
                               .read(authProvider.notifier)
                               .signUp(textEditingController.text);
-
-                          if (mounted) {
-                            context.go('/');
-                          }
                         },
                         child: const Text('Submit Username'),
                       ),

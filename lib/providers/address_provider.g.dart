@@ -8,7 +8,10 @@ part of 'address_provider.dart';
 
 String _$addressHash() => r'86ba025f9812fef780802cbba9c17dbfcd2faa16';
 
-/// See also [Address].
+/// placeholder provider for address info since we don't submit
+/// until after we've successfully submitted sign up credentials
+///
+/// Copied from [Address].
 @ProviderFor(Address)
 final addressProvider = NotifierProvider<Address, String?>.internal(
   Address.new,

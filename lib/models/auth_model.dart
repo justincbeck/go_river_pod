@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'auth_model.freezed.dart';
 part 'auth_model.g.dart';
 
+/// Freezed so I can get access to copyWith implementation
 @freezed
 class AuthModel with _$AuthModel {
   factory AuthModel({

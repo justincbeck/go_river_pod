@@ -16,6 +16,7 @@ class Auth extends _$Auth {
     return AuthModel(authState: AuthState.loggedOut);
   }
 
+  /// setting auth state during all the auth phases
   void setAuthState(AuthState authState) {
     logger.info('setAuthState()');
     state = AsyncValue.data(
