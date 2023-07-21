@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/providers/address_provider.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
@@ -46,6 +47,7 @@ class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Create Home Screen'),
       ),
@@ -97,7 +99,9 @@ class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
                       ),
                       TextButton(
                         onPressed: () async {
-                          await ref.read(authProvider.notifier).logout();
+                          ref
+                              .read(authProvider.notifier)
+                              .setAuthState(AuthState.loggedOut);
                         },
                         child: const Text('Cancel'),
                       ),
