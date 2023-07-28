@@ -6,9 +6,9 @@
   "configurations": [
 
     {
-      "name": "iPhone 13 Pro",
+      "name": "iPhone 14 Pro",
       "program": "lib/main.dart",
-      "deviceId": "1A72319B-0D20-4DF2-AC66-E25C10BB4854",
+      "deviceId": "920E389D-02E9-4292-8C91-5DCAB99CE338",
       "request": "launch",
       "type": "dart"
     },

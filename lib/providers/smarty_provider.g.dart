@@ -1,26 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'address_provider.dart';
+part of 'smarty_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$addressHash() => r'86ba025f9812fef780802cbba9c17dbfcd2faa16';
+String _$smartyHash() => r'4135b5f1a4280f5bb5e238d8f76852449c9979f9';
 
-/// placeholder provider for address info since we don't submit
-/// until after we've successfully submitted sign up credentials
-///
-/// Copied from [Address].
-@ProviderFor(Address)
-final addressProvider = NotifierProvider<Address, String?>.internal(
-  Address.new,
-  name: r'addressProvider',
+/// See also [Smarty].
+@ProviderFor(Smarty)
+final smartyProvider = AsyncNotifierProvider<Smarty, SmartyModel?>.internal(
+  Smarty.new,
+  name: r'smartyProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$addressHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$smartyHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$Address = Notifier<String?>;
+typedef _$Smarty = AsyncNotifier<SmartyModel?>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_riverpod_poc/router/router.dart';
 
-void main() {
+Future main() async {
   // turn off the # in the URLs on the web
   usePathUrlStrategy();
+
+  await dotenv.load(fileName: ".env");
+
   runApp(
     const ProviderScope(
       child: MyApp(),

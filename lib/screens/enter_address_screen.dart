@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_riverpod_poc/models/auth_model.dart';
-import 'package:go_riverpod_poc/providers/address_provider.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
+import 'package:go_riverpod_poc/widgets/smarty_search.dart';
 import 'package:go_router/go_router.dart';
 
 class EnterAddressScreen extends ConsumerStatefulWidget {
@@ -63,8 +63,8 @@ class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
                 children: [
                   SizedBox(
                     width: 300,
-                    child: TextField(
-                      controller: textEditingController,
+                    child: SmartySearch(
+                      textEditingController: textEditingController,
                     ),
                   ),
                   const SizedBox(
@@ -77,11 +77,6 @@ class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
                         onPressed: () async {
                           /// if the text editing controller is empty, do nothing
                           if (textEditingController.text.isEmpty) return;
-
-                          /// set the address in the address provider (for later submission)
-                          ref
-                              .read(addressProvider.notifier)
-                              .setAddress(textEditingController.text);
 
                           /// get the home from the home provider
                           final home = ref.read(homeProvider);

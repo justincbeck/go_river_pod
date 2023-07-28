@@ -2,7 +2,7 @@ import 'package:go_riverpod_poc/helpers/utils.dart';
 import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:go_riverpod_poc/models/home_model.dart';
-import 'package:go_riverpod_poc/providers/address_provider.dart';
+import 'package:go_riverpod_poc/providers/smarty_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,7 +21,8 @@ class Home extends _$Home {
     logger.info('build()');
     return ref.watch(authProvider).when(
           data: (auth) {
-            final address = ref.read(addressProvider);
+            final smarty = ref.read(smartyProvider).value;
+            final address = smarty?.toSmartySuggestionString();
             if (auth.authState == AuthState.signingUp && address != null) {
               return _createHome();
             } else if (auth.authState == AuthState.loggedIn) {
@@ -44,10 +45,11 @@ class Home extends _$Home {
 
   FutureOr<HomeModel?> _createHome() async {
     await Future.delayed(Duration(milliseconds: getFakeMillis()));
-    final address = ref.read(addressProvider);
-    if (address?.toLowerCase() == '123 cherry ave') {
-      ref.read(addressProvider.notifier).reset();
-      return Future.value(HomeModel(name: address!));
+    final smarty = ref.read(smartyProvider).value;
+    final address = smarty?.toSmartySuggestionString();
+    if (address != null && address.toLowerCase().contains('123 cherry ave')) {
+      ref.read(smartyProvider.notifier).reset();
+      return Future.value(HomeModel(name: address));
     }
 
     final homeError = ErrorModel(message: 'Invalid address');
@@ -57,7 +59,7 @@ class Home extends _$Home {
 
   FutureOr<HomeModel?> _fetchHome() async {
     await Future.delayed(Duration(milliseconds: getFakeMillis()));
-    return Future.value(HomeModel(name: '123 cherry ave'));
+    return Future.value(HomeModel(name: '123 Cherry Ave Altoona, PA'));
   }
 
   void reset() {
