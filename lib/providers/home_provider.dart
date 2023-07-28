@@ -2,6 +2,7 @@ import 'package:go_riverpod_poc/helpers/utils.dart';
 import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:go_riverpod_poc/models/home_model.dart';
+import 'package:go_riverpod_poc/providers/address_provider.dart';
 import 'package:go_riverpod_poc/providers/smarty_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -49,6 +50,7 @@ class Home extends _$Home {
     final address = smarty?.toSmartySuggestionString();
     if (address != null && address.toLowerCase().contains('123 cherry ave')) {
       ref.read(smartyProvider.notifier).reset();
+      ref.read(addressProvider.notifier).reset();
       return Future.value(HomeModel(name: address));
     }
 

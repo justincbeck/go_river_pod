@@ -15,18 +15,18 @@ class Smarty extends _$Smarty {
   }
 
   Future<void> selectSmartyModel(SmartyModel smartyModel) async {
-    logger.info('selectSmartyModel()');
     state = AsyncValue.data(smartyModel);
   }
 
-  Future<void> reset() async {
+  void reset() {
     return ref.invalidateSelf();
   }
 
   FutureOr<List<SmartyModel>> autoCompletePro(String searchTerm) async {
-    logger.info('autoCompletePro()');
-    final results =
-        ref.read(smartyApiProvider).autoCompletePro(searchTerm, null);
+    final results = ref.read(smartyApiProvider).autoCompletePro(
+          searchTerm,
+          state.value?.toSmartySelectedString(),
+        );
     return results;
   }
 }

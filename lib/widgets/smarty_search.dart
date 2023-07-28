@@ -4,8 +4,8 @@ import 'package:go_riverpod_poc/models/smarty_model.dart';
 import 'package:go_riverpod_poc/providers/smarty_provider.dart';
 
 class SmartySearch extends ConsumerStatefulWidget {
-  final TextEditingController? textEditingController;
-  const SmartySearch({super.key, this.textEditingController});
+  final TextEditingController textEditingController;
+  const SmartySearch({super.key, required this.textEditingController});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SmartySearchState();
@@ -14,15 +14,11 @@ class SmartySearch extends ConsumerStatefulWidget {
 class _SmartySearchState extends ConsumerState<SmartySearch> {
   final GlobalKey _formFieldKey = GlobalKey();
   final FocusNode _focusNode = FocusNode();
-  late TextEditingController _textEditingController;
 
   @override
   Widget build(BuildContext context) {
-    _textEditingController =
-        widget.textEditingController ?? TextEditingController();
-
     return RawAutocomplete<SmartyModel>(
-      textEditingController: _textEditingController,
+      textEditingController: widget.textEditingController,
       focusNode: _focusNode,
       fieldViewBuilder:
           (context, textEditingController, focusNode, onFieldSubmitted) {
@@ -57,8 +53,24 @@ class _SmartySearchState extends ConsumerState<SmartySearch> {
                   SmartyModel address = options.elementAt(index);
 
                   return GestureDetector(
-                    onTap: () {
-                      onSelected(address);
+                    onTap: () async {
+                      await ref
+                          .read(smartyProvider.notifier)
+                          .selectSmartyModel(address);
+
+                      if (address.entries > 1) {
+                        widget.textEditingController.text =
+                            address.toSmartySearchString();
+                        _focusNode.requestFocus();
+                      } else {
+                        widget.textEditingController.text = address.toString();
+                        _focusNode.unfocus();
+                      }
+
+                      widget.textEditingController.selection =
+                          TextSelection.collapsed(
+                        offset: widget.textEditingController.text.length,
+                      );
                     },
                     child: Builder(
                       builder: (context) {
@@ -93,9 +105,6 @@ class _SmartySearchState extends ConsumerState<SmartySearch> {
         }
 
         return option.toSmartySuggestionString();
-      },
-      onSelected: (option) async {
-        ref.read(smartyProvider.notifier).selectSmartyModel(option);
       },
     );
   }

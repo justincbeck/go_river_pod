@@ -36,7 +36,11 @@ class SmartyModel with _$SmartyModel {
   }
 
   String toSmartySelectedString() {
-    return '$streetLine $secondary ($entries) $city $state $zipCode';
+    if (secondary.isNotEmpty) {
+      return '$streetLine $secondary ($entries) $city $state $zipCode';
+    }
+
+    return '$streetLine ($entries) $city $state $zipCode';
   }
 
   String toSmartySuggestionString() {
