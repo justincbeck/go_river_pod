@@ -1,6 +1,6 @@
 import 'package:go_riverpod_poc/helpers/utils.dart';
 import 'package:go_riverpod_poc/models/error_model.dart';
-import 'package:go_riverpod_poc/providers/user_provider.dart';
+import 'package:go_riverpod_poc/providers/username_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -27,7 +27,7 @@ class Authentication extends _$Authentication {
     state = await AsyncValue.guard(() async {
       await Future.delayed(Duration(milliseconds: getFakeMillis()));
       if (['bill', 'frank'].contains(username.toLowerCase())) {
-        ref.read(userProvider.notifier).setUser(username);
+        ref.read(usernameProvider.notifier).setUsername(username);
         return AuthenticationState.loggedIn;
       }
 
@@ -43,7 +43,8 @@ class Authentication extends _$Authentication {
     state = await AsyncValue.guard(() async {
       await Future.delayed(Duration(milliseconds: getFakeMillis()));
       if (['bill', 'frank'].contains(username.toLowerCase())) {
-        return AuthenticationState.signingUp;
+        ref.read(usernameProvider.notifier).setUsername(username);
+        return AuthenticationState.signedUp;
       }
 
       final authError = ErrorModel(message: 'Invalid username');

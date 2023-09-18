@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_riverpod_poc/providers/address_provider.dart';
 import 'package:go_riverpod_poc/providers/authentication_provider.dart';
 import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
@@ -45,6 +46,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
+                      ref.read(addressProvider.notifier).reset();
                       await ref.read(authenticationProvider.notifier).logout();
                     },
                     child: const Text('Logout'),

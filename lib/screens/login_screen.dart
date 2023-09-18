@@ -13,12 +13,13 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final textEditingController = TextEditingController();
+  bool hasShownError = false;
 
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authenticationProvider);
 
-    if (auth is AsyncError) {
+    if (auth is AsyncError && !hasShownError) {
       Future.delayed(const Duration(milliseconds: 0), () {
         showDialog(
           context: context,
@@ -29,6 +30,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               actions: [
                 TextButton(
                   onPressed: () {
+                    hasShownError = true;
                     context.pop();
                   },
                   child: const Text('OK'),
@@ -71,6 +73,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         onPressed: () async {
                           /// if the text editing controller is empty, do nothing
                           if (textEditingController.text.isEmpty) return;
+
+                          hasShownError = false;
 
                           /// attempt to login using the presented username
                           await ref

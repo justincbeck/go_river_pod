@@ -23,9 +23,13 @@ class Home extends _$Home {
             final manualAddress = ref.read(addressProvider);
             final smarty = ref.read(smartyProvider).value;
             final address = smarty?.toSmartySuggestionString() ?? manualAddress;
-            if (auth == AuthenticationState.signingUp && address != null) {
+            if (auth == AuthenticationState.signedUp && address != null) {
               return _createHome();
             } else if (auth == AuthenticationState.loggedIn) {
+              if (state.hasValue && state.value is HomeModel) {
+                return state.value;
+              }
+
               return _fetchHome();
             }
             return null;
@@ -36,7 +40,7 @@ class Home extends _$Home {
   }
 
   FutureOr<void> createHome() async {
-    logger.info('fetchHome()');
+    logger.info('createHome()');
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       return _createHome();
@@ -48,6 +52,7 @@ class Home extends _$Home {
     final manualAddress = ref.read(addressProvider);
     final smarty = ref.read(smartyProvider).value;
     final address = smarty?.toSmartySuggestionString() ?? manualAddress;
+
     if (address != null && address.toLowerCase().contains('123 cherry ave')) {
       ref.read(smartyProvider.notifier).reset();
       ref.read(addressProvider.notifier).reset();

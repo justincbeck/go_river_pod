@@ -2,6 +2,7 @@ import 'package:go_riverpod_poc/helpers/utils.dart';
 import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:go_riverpod_poc/models/user_model.dart';
 import 'package:go_riverpod_poc/providers/authentication_provider.dart';
+import 'package:go_riverpod_poc/providers/username_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -18,7 +19,10 @@ class User extends _$User {
     logger.info('build()');
     return ref.watch(authenticationProvider).when(
           data: (auth) {
-            if (auth == AuthenticationState.loggedIn) {
+            if ([
+              AuthenticationState.loggedIn,
+              AuthenticationState.signedUp,
+            ].contains(auth)) {
               return _fetchUser();
             }
 
@@ -27,11 +31,6 @@ class User extends _$User {
           error: (error, stack) => null,
           loading: () => null,
         );
-  }
-
-  void setUser(String name) {
-    logger.info('setUser($name)');
-    state = AsyncValue.data(UserModel(name: name));
   }
 
   FutureOr<void> fetchUser() async {
@@ -45,14 +44,16 @@ class User extends _$User {
   FutureOr<UserModel?> _fetchUser() async {
     await Future.delayed(Duration(milliseconds: getFakeMillis()));
     final auth = ref.read(authenticationProvider);
-    if ([AuthenticationState.loggedIn, AuthenticationState.signingUp]
+    if ([AuthenticationState.loggedIn, AuthenticationState.signedUp]
         .contains(auth.value)) {
-      return Future.value(state.value);
+      final username = ref.read(usernameProvider);
+      if (username != null) {
+        return Future.value(UserModel(name: username));
+      }
     }
 
     final userError = ErrorModel(message: 'Not authenticated');
     logger.shout(userError);
-    ref.invalidateSelf();
     throw userError;
   }
 

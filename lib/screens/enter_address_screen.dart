@@ -20,6 +20,7 @@ class EnterAddressScreen extends ConsumerStatefulWidget {
 
 class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
   final textEditingController = TextEditingController();
+  bool hasShownError = false;
 
   @override
   void initState() {
@@ -32,7 +33,7 @@ class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
   Widget build(BuildContext context) {
     final home = ref.watch(homeProvider);
 
-    if (home is AsyncError) {
+    if (home is AsyncError && !hasShownError) {
       Future.delayed(const Duration(milliseconds: 0), () {
         showDialog(
           context: context,
@@ -43,6 +44,7 @@ class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
               actions: [
                 TextButton(
                   onPressed: () {
+                    hasShownError = true;
                     context.pop();
                   },
                   child: const Text('OK'),
@@ -91,6 +93,8 @@ class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
                           onPressed: () async {
                             /// if the text editing controller is empty, do nothing
                             if (textEditingController.text.isEmpty) return;
+
+                            hasShownError = false;
 
                             /// set the address in the address provider (for later submission)
                             ref
