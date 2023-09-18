@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_riverpod_poc/providers/address_provider.dart';
 import 'package:go_riverpod_poc/providers/auth_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
+import 'package:go_riverpod_poc/providers/smarty_provider.dart';
 import 'package:go_riverpod_poc/providers/user_provider.dart';
 
 class Debug extends ConsumerWidget {
@@ -19,16 +20,18 @@ class Debug extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Text('Smarty: ${ref.watch(smartyProvider)}'),
               Text('Address: ${ref.watch(addressProvider)}'),
               Text('Auth: ${ref.watch(authProvider)}'),
               Text('Home: ${ref.watch(homeProvider)}'),
               Text('User: ${ref.watch(userProvider)}'),
               TextButton(
                 onPressed: () {
+                  ref.read(smartyProvider.notifier).reset();
+                  ref.read(addressProvider.notifier).reset();
                   ref.read(authProvider.notifier).reset();
                   ref.read(homeProvider.notifier).reset();
                   ref.read(userProvider.notifier).reset();
-                  ref.read(addressProvider.notifier).reset();
                 },
                 child: const Text('reset'),
               ),

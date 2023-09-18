@@ -16,6 +16,6 @@ class Address extends _$Address {
   }
 
   void reset() {
-    state = null;
+    return ref.invalidateSelf();
   }
 }

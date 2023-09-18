@@ -11,8 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.5
+  dio:
+  flutter_dotenv: ^5.1.0
   flutter_riverpod:
   freezed_annotation:
+  geocoding:
   go_router: 8.0.3
   json_annotation:
   logging: ^1.0.2
@@ -29,3 +32,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env
+
+
