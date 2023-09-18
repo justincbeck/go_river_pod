@@ -1,8 +1,6 @@
 // private navigators
 import 'package:flutter/material.dart';
-import 'package:go_riverpod_poc/providers/address_provider.dart';
-import 'package:go_riverpod_poc/providers/authentication_provider.dart';
-import 'package:go_riverpod_poc/providers/home_provider.dart';
+import 'package:go_riverpod_poc/providers/authorization_provider.dart';
 import 'package:go_riverpod_poc/screens/enter_address_screen.dart';
 import 'package:go_riverpod_poc/screens/dashboard_screen.dart';
 import 'package:go_riverpod_poc/screens/landing_screen.dart';
@@ -22,65 +20,34 @@ class Router extends _$Router {
 
   @override
   GoRouter build() {
-    /// Setting up listeners so that if any of these providers
-    /// have a change, we trigger a navigation redirect (if necessary)
-    ref.listen(addressProvider, (previous, next) {
-      state.go('/');
-    });
-    ref.listen(authenticationProvider, (previous, next) {
-      if (!next.isLoading) state.go('/');
-    });
-    ref.listen(homeProvider, (previous, next) {
-      if (!next.isLoading) state.go('/');
+    ref.listen(authorizationProvider, (previous, next) {
+      switch (next.value) {
+        case (AuthorizationState.loading):
+          // If we're loading, show the splash screen
+          state.go('/loading');
+        case (AuthorizationState.authenticating):
+          // If we're logging in, show the '/sign_in' screen
+          state.go('/sign_in');
+        case (AuthorizationState.signingUp):
+          // If we're signing up (and we have an address), show the '/sign_up' screen
+          state.go('/sign_up');
+        case (AuthorizationState.authorized):
+          // If we're authenticated with a home, show the dashboard
+          state.go('/dashboard');
+        case (AuthorizationState.signingUpWithoutHome):
+        case (AuthorizationState.authenticatedWithoutHome):
+          // If we don't have an address, show the '/add_home' screen
+          state.go('/enter_address');
+        default:
+          // If we're unauthorized (not authenticated in any way), show the landing screen
+          state.go('/');
+      }
     });
 
     return GoRouter(
       initialLocation: '/',
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
-      redirect: (context, state) async {
-        /// All of this redirect logic is used for auth (login and signup)
-        /// Other redirect logic will be done at the route level
-        final address = ref.read(addressProvider);
-        final auth = ref.read(authenticationProvider);
-        final home = ref.read(homeProvider);
-
-        if ([AuthenticationState.loggingIn].contains(auth.requireValue)) {
-          if (auth.isLoading) {
-            return '/loading';
-          }
-          return '/login';
-        }
-
-        if ([AuthenticationState.loggedIn].contains(auth.requireValue)) {
-          return '/dashboard';
-        }
-
-        if ([AuthenticationState.loggingOut].contains(auth.requireValue)) {
-          return '/loading';
-        }
-
-        if ([AuthenticationState.loggedOut].contains(auth.requireValue)) {
-          return '/';
-        }
-
-        if ([AuthenticationState.signingUp].contains(auth.requireValue)) {
-          if (auth.isLoading || home.isLoading) {
-            return '/loading';
-          }
-          if ((address == null && home.value == null) || home.hasError) {
-            return '/enter_address';
-          }
-          // if (auth.requireValue.username == null) {
-          //   return '/sign_up';
-          // }
-          // if (auth.requireValue.username != null && home.hasValue) {
-          //   return '/dashboard';
-          // }
-        }
-
-        return null;
-      },
       routes: [
         GoRoute(
           path: '/',
@@ -101,7 +68,7 @@ class Router extends _$Router {
               ),
             ),
             GoRoute(
-              path: 'login',
+              path: 'sign_in',
               pageBuilder: (context, state) => const NoTransitionPage(
                 child: LoginScreen(),
               ),

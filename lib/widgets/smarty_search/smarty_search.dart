@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_riverpod_poc/models/smarty_model.dart';
+import 'package:go_riverpod_poc/providers/home_provider.dart';
 import 'package:go_riverpod_poc/providers/smarty_provider.dart';
+import 'package:go_riverpod_poc/widgets/smarty_search/debounceable.dart';
 
 class SmartySearch extends ConsumerStatefulWidget {
   final TextEditingController textEditingController;
-  const SmartySearch({super.key, required this.textEditingController});
+  const SmartySearch({
+    super.key,
+    required this.textEditingController,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SmartySearchState();
@@ -14,9 +19,27 @@ class SmartySearch extends ConsumerStatefulWidget {
 class _SmartySearchState extends ConsumerState<SmartySearch> {
   final GlobalKey _formFieldKey = GlobalKey();
   final FocusNode _focusNode = FocusNode();
+  late final Debounceable<Iterable<SmartyModel>?, String> _debouncedSearch;
+
+  String currentPattern = '';
+  String? _currentQuery;
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _debouncedSearch = debounce<Iterable<SmartyModel>?, String>(_search);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    var isCreatingHome = ref.watch(homeProvider).isLoading;
+
     return RawAutocomplete<SmartyModel>(
       textEditingController: widget.textEditingController,
       focusNode: _focusNode,
@@ -24,6 +47,7 @@ class _SmartySearchState extends ConsumerState<SmartySearch> {
           (context, textEditingController, focusNode, onFieldSubmitted) {
         return TextFormField(
           key: _formFieldKey,
+          readOnly: isCreatingHome,
           controller: textEditingController,
           style: Theme.of(context).textTheme.bodyMedium,
           focusNode: focusNode,
@@ -43,7 +67,6 @@ class _SmartySearchState extends ConsumerState<SmartySearch> {
               ),
               child: ListView.separated(
                 shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 itemCount: options.length,
                 separatorBuilder: (context, i) {
@@ -95,9 +118,21 @@ class _SmartySearchState extends ConsumerState<SmartySearch> {
         );
       },
       optionsBuilder: (TextEditingValue textEditingValue) async {
-        return ref
-            .read(smartyProvider.notifier)
-            .autoCompletePro(textEditingValue.text);
+        var pattern = textEditingValue.text;
+
+        if (pattern != currentPattern) {
+          if (pattern.isEmpty) {
+            ref.read(smartyProvider.notifier).reset();
+          }
+          if (!pattern.contains(currentPattern)) {
+            ref.read(smartyProvider.notifier).reset();
+          }
+        }
+        currentPattern = pattern;
+
+        final value = await _debouncedSearch(pattern);
+
+        return value ?? [];
       },
       displayStringForOption: (option) {
         if (option.secondary.isNotEmpty && option.entries > 1) {
@@ -107,5 +142,23 @@ class _SmartySearchState extends ConsumerState<SmartySearch> {
         return option.toSmartySuggestionString();
       },
     );
+  }
+
+  Future<Iterable<SmartyModel>> _search(String query) async {
+    _currentQuery = query;
+
+    late final Iterable<SmartyModel>? options;
+    try {
+      options = await ref.read(smartyProvider.notifier).autoCompletePro(query);
+    } catch (e) {
+      rethrow;
+    }
+
+    if (_currentQuery != query) {
+      return Future.value([]);
+    }
+    _currentQuery = null;
+
+    return options;
   }
 }

@@ -68,6 +68,7 @@ class Authentication extends _$Authentication {
 
 enum AuthenticationState {
   signingUp,
+  signedUp,
   loggingIn,
   loggedIn,
   loggingOut,

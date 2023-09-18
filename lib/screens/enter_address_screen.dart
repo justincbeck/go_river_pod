@@ -5,7 +5,7 @@ import 'package:go_riverpod_poc/providers/authentication_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
 import 'package:go_riverpod_poc/providers/smarty_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
-import 'package:go_riverpod_poc/widgets/smarty_search.dart';
+import 'package:go_riverpod_poc/widgets/smarty_search/smarty_search.dart';
 import 'package:go_router/go_router.dart';
 
 class EnterAddressScreen extends ConsumerStatefulWidget {
