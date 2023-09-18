@@ -1,13 +1,11 @@
 import 'package:go_riverpod_poc/helpers/utils.dart';
-import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/models/error_model.dart';
 import 'package:go_riverpod_poc/models/home_model.dart';
 import 'package:go_riverpod_poc/providers/address_provider.dart';
+import 'package:go_riverpod_poc/providers/authentication_provider.dart';
 import 'package:go_riverpod_poc/providers/smarty_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import 'auth_provider.dart';
 
 part 'home_provider.g.dart';
 
@@ -20,14 +18,14 @@ class Home extends _$Home {
     /// build is triggered based on changes
     /// happening in the auth provider
     logger.info('build()');
-    return ref.watch(authProvider).when(
+    return ref.watch(authenticationProvider).when(
           data: (auth) {
             final manualAddress = ref.read(addressProvider);
             final smarty = ref.read(smartyProvider).value;
             final address = smarty?.toSmartySuggestionString() ?? manualAddress;
-            if (auth.authState == AuthState.signingUp && address != null) {
+            if (auth == AuthenticationState.signingUp && address != null) {
               return _createHome();
-            } else if (auth.authState == AuthState.loggedIn) {
+            } else if (auth == AuthenticationState.loggedIn) {
               return _fetchHome();
             }
             return null;

@@ -1,8 +1,7 @@
 // private navigators
 import 'package:flutter/material.dart';
-import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/providers/address_provider.dart';
-import 'package:go_riverpod_poc/providers/auth_provider.dart';
+import 'package:go_riverpod_poc/providers/authentication_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
 import 'package:go_riverpod_poc/screens/enter_address_screen.dart';
 import 'package:go_riverpod_poc/screens/dashboard_screen.dart';
@@ -28,7 +27,7 @@ class Router extends _$Router {
     ref.listen(addressProvider, (previous, next) {
       state.go('/');
     });
-    ref.listen(authProvider, (previous, next) {
+    ref.listen(authenticationProvider, (previous, next) {
       if (!next.isLoading) state.go('/');
     });
     ref.listen(homeProvider, (previous, next) {
@@ -43,41 +42,41 @@ class Router extends _$Router {
         /// All of this redirect logic is used for auth (login and signup)
         /// Other redirect logic will be done at the route level
         final address = ref.read(addressProvider);
-        final auth = ref.read(authProvider);
+        final auth = ref.read(authenticationProvider);
         final home = ref.read(homeProvider);
 
-        if ([AuthState.loggingIn].contains(auth.requireValue.authState)) {
+        if ([AuthenticationState.loggingIn].contains(auth.requireValue)) {
           if (auth.isLoading) {
             return '/loading';
           }
           return '/login';
         }
 
-        if ([AuthState.loggedIn].contains(auth.requireValue.authState)) {
+        if ([AuthenticationState.loggedIn].contains(auth.requireValue)) {
           return '/dashboard';
         }
 
-        if ([AuthState.loggingOut].contains(auth.requireValue.authState)) {
+        if ([AuthenticationState.loggingOut].contains(auth.requireValue)) {
           return '/loading';
         }
 
-        if ([AuthState.loggedOut].contains(auth.requireValue.authState)) {
+        if ([AuthenticationState.loggedOut].contains(auth.requireValue)) {
           return '/';
         }
 
-        if ([AuthState.signingUp].contains(auth.requireValue.authState)) {
+        if ([AuthenticationState.signingUp].contains(auth.requireValue)) {
           if (auth.isLoading || home.isLoading) {
             return '/loading';
           }
           if ((address == null && home.value == null) || home.hasError) {
             return '/enter_address';
           }
-          if (auth.requireValue.username == null) {
-            return '/sign_up';
-          }
-          if (auth.requireValue.username != null && home.hasValue) {
-            return '/dashboard';
-          }
+          // if (auth.requireValue.username == null) {
+          //   return '/sign_up';
+          // }
+          // if (auth.requireValue.username != null && home.hasValue) {
+          //   return '/dashboard';
+          // }
         }
 
         return null;

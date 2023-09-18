@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/providers/address_provider.dart';
-import 'package:go_riverpod_poc/providers/auth_provider.dart';
+import 'package:go_riverpod_poc/providers/authentication_provider.dart';
 import 'package:go_riverpod_poc/providers/smarty_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +20,7 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = ref.watch(authProvider);
+    final auth = ref.watch(authenticationProvider);
 
     if (auth is AsyncError) {
       Future.delayed(const Duration(milliseconds: 0), () {
@@ -30,7 +29,7 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
           builder: (_) {
             return AlertDialog(
               title: const Text('User Error'),
-              content: Text(auth.error!.toString()),
+              content: Text(auth.error.toString()),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -85,7 +84,7 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                             /// attempt to login using the presented username
                             await ref
-                                .read(authProvider.notifier)
+                                .read(authenticationProvider.notifier)
                                 .signUp(textEditingController.text);
                           },
                           child: const Text('Submit Username'),
@@ -97,9 +96,7 @@ class SignUpScreenState extends ConsumerState<SignUpScreen> {
                           onPressed: () {
                             ref.read(addressProvider.notifier).reset();
                             ref.read(smartyProvider.notifier).reset();
-                            ref
-                                .read(authProvider.notifier)
-                                .setAuthState(AuthState.loggedOut);
+                            ref.read(authenticationProvider.notifier).logout();
                           },
                           child: const Text('Cancel'),
                         ),

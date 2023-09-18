@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/providers/address_provider.dart';
-import 'package:go_riverpod_poc/providers/auth_provider.dart';
+import 'package:go_riverpod_poc/providers/authentication_provider.dart';
 import 'package:go_riverpod_poc/providers/home_provider.dart';
 import 'package:go_riverpod_poc/providers/smarty_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
@@ -117,9 +116,7 @@ class _EnterAddressScreenState extends ConsumerState<EnterAddressScreen> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            ref
-                                .read(authProvider.notifier)
-                                .setAuthState(AuthState.loggedOut);
+                            ref.read(authenticationProvider.notifier).logout();
                           },
                           child: const Text('Cancel'),
                         ),

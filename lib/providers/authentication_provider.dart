@@ -1,29 +1,24 @@
 import 'package:go_riverpod_poc/helpers/utils.dart';
-import 'package:go_riverpod_poc/models/auth_model.dart';
 import 'package:go_riverpod_poc/models/error_model.dart';
+import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'auth_provider.g.dart';
+part 'authentication_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class Auth extends _$Auth {
-  final logger = Logger('AuthProvider');
+class Authentication extends _$Authentication {
+  final logger = Logger('AuthenticationProvider');
 
   @override
-  FutureOr<AuthModel> build() {
+  FutureOr<AuthenticationState> build() {
     logger.info('build()');
-    return AuthModel(authState: AuthState.loggedOut);
+    return AuthenticationState.loggedOut;
   }
 
-  /// setting auth state during all the auth phases
-  void setAuthState(AuthState authState) {
-    logger.info('setAuthState()');
-    state = AsyncValue.data(
-      state.value!.copyWith(
-        authState: authState,
-      ),
-    );
+  void setAuthenticationState(AuthenticationState authState) {
+    logger.info('setAuthenticationState()');
+    state = AsyncValue.data(authState);
   }
 
   Future<void> login(String username) async {
@@ -32,10 +27,8 @@ class Auth extends _$Auth {
     state = await AsyncValue.guard(() async {
       await Future.delayed(Duration(milliseconds: getFakeMillis()));
       if (['bill', 'frank'].contains(username.toLowerCase())) {
-        return AuthModel(
-          username: username,
-          authState: AuthState.loggedIn,
-        );
+        ref.read(userProvider.notifier).setUser(username);
+        return AuthenticationState.loggedIn;
       }
 
       final authError = ErrorModel(message: 'Invalid username');
@@ -50,10 +43,7 @@ class Auth extends _$Auth {
     state = await AsyncValue.guard(() async {
       await Future.delayed(Duration(milliseconds: getFakeMillis()));
       if (['bill', 'frank'].contains(username.toLowerCase())) {
-        return AuthModel(
-          username: username,
-          authState: AuthState.signingUp,
-        );
+        return AuthenticationState.signingUp;
       }
 
       final authError = ErrorModel(message: 'Invalid username');
@@ -64,15 +54,22 @@ class Auth extends _$Auth {
 
   Future<void> logout() async {
     logger.info('logout()');
-    setAuthState(AuthState.loggingOut);
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       await Future.delayed(Duration(milliseconds: getFakeMillis()));
-      return Future.value(AuthModel(authState: AuthState.loggedOut));
+      return Future.value(AuthenticationState.loggedOut);
     });
   }
 
   void reset() {
     ref.invalidateSelf();
   }
+}
+
+enum AuthenticationState {
+  signingUp,
+  loggingIn,
+  loggedIn,
+  loggingOut,
+  loggedOut,
 }

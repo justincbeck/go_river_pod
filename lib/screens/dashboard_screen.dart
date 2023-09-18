@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_riverpod_poc/providers/auth_provider.dart';
+import 'package:go_riverpod_poc/providers/authentication_provider.dart';
 import 'package:go_riverpod_poc/providers/user_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
 import 'package:go_riverpod_poc/widgets/user_display.dart';
@@ -25,7 +25,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(authProvider);
+    ref.watch(authenticationProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +45,7 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
-                      await ref.read(authProvider.notifier).logout();
+                      await ref.read(authenticationProvider.notifier).logout();
                     },
                     child: const Text('Logout'),
                   ),
