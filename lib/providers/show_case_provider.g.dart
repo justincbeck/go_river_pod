@@ -1,25 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'authorization_provider.dart';
+part of 'show_case_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authorizationHash() => r'30d0461f706892a87b2b26211f3fb1c7d9aa2915';
+String _$showCaseContentStepHash() =>
+    r'7fdd5f78d3ab0fe8d27e6894565545c1ac5b861e';
 
-/// See also [Authorization].
-@ProviderFor(Authorization)
-final authorizationProvider =
-    AsyncNotifierProvider<Authorization, AuthorizationState>.internal(
-  Authorization.new,
-  name: r'authorizationProvider',
+/// See also [ShowCaseContentStep].
+@ProviderFor(ShowCaseContentStep)
+final showCaseContentStepProvider =
+    NotifierProvider<ShowCaseContentStep, int>.internal(
+  ShowCaseContentStep.new,
+  name: r'showCaseContentStepProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$authorizationHash,
+      : _$showCaseContentStepHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$Authorization = AsyncNotifier<AuthorizationState>;
+typedef _$ShowCaseContentStep = Notifier<int>;
 // ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions

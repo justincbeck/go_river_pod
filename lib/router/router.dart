@@ -6,10 +6,12 @@ import 'package:go_riverpod_poc/screens/dashboard_screen.dart';
 import 'package:go_riverpod_poc/screens/landing_screen.dart';
 import 'package:go_riverpod_poc/screens/loading_screen.dart';
 import 'package:go_riverpod_poc/screens/login_screen.dart';
+import 'package:go_riverpod_poc/screens/show_case/show_case_screen.dart';
 import 'package:go_riverpod_poc/screens/sign_up_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 part 'router.g.dart';
 
@@ -76,11 +78,22 @@ class Router extends _$Router {
           ],
         ),
         GoRoute(
-          path: '/dashboard',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: DashboardScreen(),
-          ),
-        ),
+            path: '/dashboard',
+            pageBuilder: (context, state) => const NoTransitionPage(
+                  child: DashboardScreen(),
+                ),
+            routes: [
+              GoRoute(
+                path: 'showcase',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: ShowCaseWidget(
+                    builder: Builder(
+                      builder: (context) => const ShowCaseScreen(),
+                    ),
+                  ),
+                ),
+              ),
+            ]),
         GoRoute(
           path: '/loading',
           pageBuilder: (context, state) => const NoTransitionPage(

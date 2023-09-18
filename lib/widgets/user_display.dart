@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_riverpod_poc/providers/user_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class UserDisplay extends ConsumerWidget {
   const UserDisplay({super.key});
@@ -15,7 +16,12 @@ class UserDisplay extends ConsumerWidget {
       if (user is AsyncLoading) {
         return const CircularProgressIndicator();
       }
-      return Text(user.value?.name ?? 'No User');
+      return GestureDetector(
+        onTap: () {
+          context.go('/dashboard/showcase');
+        },
+        child: Text(user.value?.name ?? 'No User'),
+      );
     });
   }
 }

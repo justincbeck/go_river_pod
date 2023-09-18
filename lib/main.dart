@@ -9,7 +9,8 @@ Future main() async {
   // turn off the # in the URLs on the web
   usePathUrlStrategy();
 
-  await dotenv.load(fileName: ".env");
+  // load .env for Smarty Streets API
+  await dotenv.load(fileName: '.env');
 
   runApp(
     const ProviderScope(

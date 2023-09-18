@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_riverpod_poc/providers/authentication_provider.dart';
 import 'package:go_riverpod_poc/widgets/debug.dart';
-import 'package:go_router/go_router.dart';
 
 class LandingScreen extends ConsumerWidget {
   const LandingScreen({
@@ -30,7 +29,6 @@ class LandingScreen extends ConsumerWidget {
                           .read(authenticationProvider.notifier)
                           .setAuthenticationState(
                               AuthenticationState.signingUp);
-                      context.go('/enter_address');
                     },
                     child: const Text('Sign Up'),
                   ),
@@ -41,7 +39,6 @@ class LandingScreen extends ConsumerWidget {
                           .read(authenticationProvider.notifier)
                           .setAuthenticationState(
                               AuthenticationState.loggingIn);
-                      context.go('/login');
                     },
                     child: const Text('Login'),
                   ),

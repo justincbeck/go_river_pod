@@ -6,7 +6,7 @@ part of 'smarty_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$smartyHash() => r'78f23ba72e5e00f0269d2211c92fa23cf32e51b5';
+String _$smartyHash() => r'b3e9733b114bb50bd96a4a014748ac8d1eb2e55f';
 
 /// See also [Smarty].
 @ProviderFor(Smarty)

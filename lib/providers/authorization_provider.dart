@@ -45,6 +45,10 @@ class Authorization extends _$Authorization {
 
     return AuthorizationState.unauthorized;
   }
+
+  void reset() {
+    ref.invalidateSelf();
+  }
 }
 
 enum AuthorizationState {
