@@ -12,7 +12,6 @@ class Debug extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final smarty = ref.watch(smartyProvider);
     final address = ref.watch(addressProvider);
     final authentication = ref.watch(authenticationProvider);
     final home = ref.watch(homeProvider);
@@ -28,7 +27,6 @@ class Debug extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text('Smarty: $smarty'),
               Text('Address: $address'),
               Text('Home: $home'),
               Text('User: $user'),

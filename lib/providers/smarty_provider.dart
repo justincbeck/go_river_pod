@@ -11,6 +11,7 @@ class Smarty extends _$Smarty {
 
   @override
   FutureOr<SmartyModel?> build() async {
+    logger.info('build()');
     return null;
   }
 
