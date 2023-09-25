@@ -28,38 +28,33 @@ class DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget build(BuildContext context) {
     ref.watch(authenticationProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard Screen'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: 300,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const UserDisplay(),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () async {
-                      ref.read(addressProvider.notifier).reset();
-                      await ref.read(authenticationProvider.notifier).logout();
-                    },
-                    child: const Text('Logout'),
-                  ),
-                ],
-              ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 300,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const UserDisplay(),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    ref.read(addressProvider.notifier).reset();
+                    await ref.read(authenticationProvider.notifier).logout();
+                  },
+                  child: const Text('Logout'),
+                ),
+              ],
             ),
-            const SizedBox(
-              height: 200,
-              child: Debug(),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 200,
+            child: Debug(),
+          ),
+        ],
       ),
     );
   }

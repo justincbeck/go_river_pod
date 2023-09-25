@@ -18,9 +18,12 @@ dependencies:
   geocoding:
   go_router: 8.0.3
   json_annotation:
+  shared_preferences: ^2.2.1
+  onboarding_overlay: ^3.2.1
   logging: ^1.0.2
   riverpod_annotation:
   showcaseview: ^2.0.3
+  stack_trace:
 
 dev_dependencies:
   flutter_test:

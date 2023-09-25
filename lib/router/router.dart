@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_riverpod_poc/providers/authorization_provider.dart';
 import 'package:go_riverpod_poc/screens/enter_address_screen.dart';
 import 'package:go_riverpod_poc/screens/dashboard_screen.dart';
+import 'package:go_riverpod_poc/screens/home_screen.dart';
 import 'package:go_riverpod_poc/screens/landing_screen.dart';
 import 'package:go_riverpod_poc/screens/loading_screen.dart';
 import 'package:go_riverpod_poc/screens/login_screen.dart';
@@ -18,6 +19,8 @@ part 'router.g.dart';
 @Riverpod(keepAlive: true)
 class Router extends _$Router {
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  final _dashboardNavigatorKey = GlobalKey<NavigatorState>();
+  final _showcaseNavigatorKey = GlobalKey<NavigatorState>();
   final Logger logger = Logger('RouterProvider');
 
   @override
@@ -77,23 +80,42 @@ class Router extends _$Router {
             ),
           ],
         ),
-        GoRoute(
-            path: '/dashboard',
-            pageBuilder: (context, state) => const NoTransitionPage(
-                  child: DashboardScreen(),
-                ),
-            routes: [
-              GoRoute(
-                path: 'showcase',
-                pageBuilder: (context, state) => NoTransitionPage(
-                  child: ShowCaseWidget(
-                    builder: Builder(
-                      builder: (context) => const ShowCaseScreen(),
-                    ),
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) {
+            return ScaffoldWithNestedNavigation(
+              navigationShell: navigationShell,
+            );
+          },
+          branches: [
+            StatefulShellBranch(
+              navigatorKey: _dashboardNavigatorKey,
+              routes: [
+                GoRoute(
+                  path: '/dashboard',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: DashboardScreen(),
                   ),
                 ),
-              ),
-            ]),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: _showcaseNavigatorKey,
+              routes: [
+                GoRoute(
+                  path: '/showcase_1',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: ShowCaseScreen(),
+                    // child: ShowCaseWidget(
+                    //   builder: Builder(
+                    //     builder: (context) => const ShowCaseScreen(),
+                    //   ),
+                    // ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
         GoRoute(
           path: '/loading',
           pageBuilder: (context, state) => const NoTransitionPage(
@@ -101,6 +123,78 @@ class Router extends _$Router {
           ),
         ),
       ],
+    );
+  }
+}
+
+class ScaffoldWithNestedNavigation extends StatelessWidget {
+  const ScaffoldWithNestedNavigation({
+    Key? key,
+    required this.navigationShell,
+  }) : super(key: key ?? const ValueKey('ScaffoldWithNestedNavigation'));
+  final StatefulNavigationShell navigationShell;
+
+  void _goBranch(int index) {
+    navigationShell.goBranch(
+      index,
+      // A common pattern when using bottom navigation bars is to support
+      // navigating to the initial location when tapping the item that is
+      // already active. This example demonstrates how to support this behavior,
+      // using the initialLocation parameter of goBranch.
+      initialLocation: index == navigationShell.currentIndex,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ShowCaseWidget(
+      enableAutoScroll: true,
+      builder: Builder(
+        builder: (context) => HomeScreen(
+          content: navigationShell,
+          bottomNavigationBar: Container(
+            decoration: const BoxDecoration(
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black54,
+                  blurRadius: 7,
+                  offset: Offset(0, 0),
+                ),
+              ],
+            ),
+            child: NavigationBar(
+              backgroundColor: Colors.white,
+              indicatorColor: Colors.transparent,
+              selectedIndex: navigationShell.currentIndex,
+              destinations: const [
+                NavigationDestination(
+                  selectedIcon: Icon(
+                    Icons.type_specimen_outlined,
+                    color: Colors.red,
+                  ),
+                  icon: Icon(
+                    Icons.type_specimen_outlined,
+                    color: Colors.blue,
+                  ),
+                  label: 'Dashboard',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(
+                    Icons.monetization_on_outlined,
+                    color: Colors.red,
+                  ),
+                  icon: Icon(
+                    Icons.monetization_on_outlined,
+                    color: Colors.blue,
+                  ),
+                  label: 'Showcase 1',
+                ),
+              ],
+              onDestinationSelected: _goBranch,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
