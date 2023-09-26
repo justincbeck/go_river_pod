@@ -105,11 +105,6 @@ class Router extends _$Router {
                   path: '/showcase_1',
                   pageBuilder: (context, state) => const NoTransitionPage(
                     child: ShowCaseScreen(),
-                    // child: ShowCaseWidget(
-                    //   builder: Builder(
-                    //     builder: (context) => const ShowCaseScreen(),
-                    //   ),
-                    // ),
                   ),
                 ),
               ],

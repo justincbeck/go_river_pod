@@ -14,12 +14,13 @@ class ShowCaseScreen extends ConsumerStatefulWidget {
 }
 
 class ShowCaseScreenState extends ConsumerState<ShowCaseScreen> {
+  final maxStepKeys = 2;
   late List<GlobalKey> _stepKeys;
 
   @override
   void initState() {
     super.initState();
-    _stepKeys = List.generate(3, (index) => GlobalKey());
+    _stepKeys = List.generate(5, (index) => GlobalKey());
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ShowCaseWidget.of(context).startShowCase(_stepKeys);
     });
@@ -27,7 +28,8 @@ class ShowCaseScreenState extends ConsumerState<ShowCaseScreen> {
 
   nextStep() {
     final step = ref.read(showCaseContentStepProvider);
-    if (step >= _stepKeys.length - 1) {
+    if (step >= maxStepKeys - 1) {
+      ShowCaseWidget.of(context).dismiss();
       ref.read(showCaseContentStepProvider.notifier).reset();
     } else {
       ref.read(showCaseContentStepProvider.notifier).nextStep();
@@ -51,38 +53,20 @@ class ShowCaseScreenState extends ConsumerState<ShowCaseScreen> {
           children: _stepKeys.map(
             (e) {
               int i = _stepKeys.indexOf(e);
+              if (i < maxStepKeys) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 80.0),
+                  child: Align(
+                    alignment: AlignmentDirectional.center,
+                    child: showcaseWithWidget(e, Text('Note $i')),
+                  ),
+                );
+              }
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 80.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Showcase.withWidget(
-                      onTargetClick: () => nextStep(),
-                      onBarrierClick: () => nextStep(),
-                      disposeOnTap: false,
-                      key: e,
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-                      tooltipPosition: TooltipPosition.bottom,
-                      targetPadding: const EdgeInsets.all(8),
-                      container: Container(
-                        width: MediaQuery.of(context).size.width - 32,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.0),
-                          color: Colors.white,
-                        ),
-                        child: Center(
-                          child: ShowCaseContent(
-                            index: i,
-                            title:
-                                'Provider Step: ${ref.read(showCaseContentStepProvider)}',
-                          ),
-                        ),
-                      ),
-                      child: Text('Note $i'),
-                    ),
-                  ],
+                child: Align(
+                  alignment: AlignmentDirectional.center,
+                  child: Text('Note $i'),
                 ),
               );
             },
@@ -90,5 +74,45 @@ class ShowCaseScreenState extends ConsumerState<ShowCaseScreen> {
         ),
       ),
     );
+  }
+
+  Showcase showcaseWithWidget(GlobalKey key, Widget child) {
+    return Showcase.withWidget(
+      onTargetClick: () => nextStep(),
+      onBarrierClick: () => nextStep(),
+      disposeOnTap: false,
+      key: key,
+      height: 200,
+      width: MediaQuery.of(context).size.width,
+      tooltipPosition:
+          getTooltipPositon(key, MediaQuery.of(context).size.height),
+      targetPadding: const EdgeInsets.all(8),
+      container: Container(
+        width: MediaQuery.of(context).size.width - 32,
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
+          color: Colors.white,
+        ),
+        child: Center(
+          child: ShowCaseContent(
+            title: 'Provider Step: ${ref.read(showCaseContentStepProvider)}',
+          ),
+        ),
+      ),
+      child: child,
+    );
+  }
+
+  TooltipPosition getTooltipPositon(GlobalKey key, double height) {
+    var tooltipPosition = TooltipPosition.bottom;
+    final box = key.currentContext?.findRenderObject() as RenderBox?;
+    final position = box?.localToGlobal(Offset.zero);
+    double? y = position?.dy;
+    if (y != null && y > height / 1.5) {
+      tooltipPosition = TooltipPosition.top;
+    }
+
+    return tooltipPosition;
   }
 }
