@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_riverpod_poc/providers/show_case_provider.dart';
-import 'package:go_riverpod_poc/screens/show_case/show_case_content.dart';
+import 'package:go_riverpod_poc/widgets/showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class ShowCaseScreen extends ConsumerStatefulWidget {
@@ -14,7 +14,7 @@ class ShowCaseScreen extends ConsumerStatefulWidget {
 }
 
 class ShowCaseScreenState extends ConsumerState<ShowCaseScreen> {
-  final maxStepKeys = 2;
+  final maxStepKeys = 5;
   late List<GlobalKey> _stepKeys;
 
   @override
@@ -58,7 +58,14 @@ class ShowCaseScreenState extends ConsumerState<ShowCaseScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 80.0),
                   child: Align(
                     alignment: AlignmentDirectional.center,
-                    child: showcaseWithWidget(e, Text('Note $i')),
+                    child: ShowcaseWidget(
+                      identifier: e,
+                      title: 'Note $i',
+                      content: const SizedBox.shrink(),
+                      child: Text('Note $i'),
+                      nextCallback: () => nextStep(),
+                      previousCallback: () => nextStep(),
+                    ),
                   ),
                 );
               }
@@ -74,45 +81,5 @@ class ShowCaseScreenState extends ConsumerState<ShowCaseScreen> {
         ),
       ),
     );
-  }
-
-  Showcase showcaseWithWidget(GlobalKey key, Widget child) {
-    return Showcase.withWidget(
-      onTargetClick: () => nextStep(),
-      onBarrierClick: () => nextStep(),
-      disposeOnTap: false,
-      key: key,
-      height: 200,
-      width: MediaQuery.of(context).size.width,
-      tooltipPosition:
-          getTooltipPositon(key, MediaQuery.of(context).size.height),
-      targetPadding: const EdgeInsets.all(8),
-      container: Container(
-        width: MediaQuery.of(context).size.width - 32,
-        height: 200,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
-          color: Colors.white,
-        ),
-        child: Center(
-          child: ShowCaseContent(
-            title: 'Provider Step: ${ref.read(showCaseContentStepProvider)}',
-          ),
-        ),
-      ),
-      child: child,
-    );
-  }
-
-  TooltipPosition getTooltipPositon(GlobalKey key, double height) {
-    var tooltipPosition = TooltipPosition.bottom;
-    final box = key.currentContext?.findRenderObject() as RenderBox?;
-    final position = box?.localToGlobal(Offset.zero);
-    double? y = position?.dy;
-    if (y != null && y > height / 1.5) {
-      tooltipPosition = TooltipPosition.top;
-    }
-
-    return tooltipPosition;
   }
 }

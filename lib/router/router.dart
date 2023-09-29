@@ -9,6 +9,7 @@ import 'package:go_riverpod_poc/screens/loading_screen.dart';
 import 'package:go_riverpod_poc/screens/login_screen.dart';
 import 'package:go_riverpod_poc/screens/show_case/show_case_screen.dart';
 import 'package:go_riverpod_poc/screens/sign_up_screen.dart';
+import 'package:go_riverpod_poc/screens/tabbed_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,6 +21,7 @@ part 'router.g.dart';
 class Router extends _$Router {
   final _rootNavigatorKey = GlobalKey<NavigatorState>();
   final _dashboardNavigatorKey = GlobalKey<NavigatorState>();
+  final _tabbedViewNavigatorKey = GlobalKey<NavigatorState>();
   final _showcaseNavigatorKey = GlobalKey<NavigatorState>();
   final Logger logger = Logger('RouterProvider');
 
@@ -94,6 +96,17 @@ class Router extends _$Router {
                   path: '/dashboard',
                   pageBuilder: (context, state) => const NoTransitionPage(
                     child: DashboardScreen(),
+                  ),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: _tabbedViewNavigatorKey,
+              routes: [
+                GoRoute(
+                  path: '/tabbed_view',
+                  pageBuilder: (context, state) => const NoTransitionPage(
+                    child: TabbedViewScreen(),
                   ),
                 ),
               ],
@@ -182,7 +195,18 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
                     Icons.monetization_on_outlined,
                     color: Colors.blue,
                   ),
-                  label: 'Showcase 1',
+                  label: 'Tabbed View',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(
+                    Icons.monetization_on_outlined,
+                    color: Colors.red,
+                  ),
+                  icon: Icon(
+                    Icons.monetization_on_outlined,
+                    color: Colors.blue,
+                  ),
+                  label: 'Scroll View',
                 ),
               ],
               onDestinationSelected: _goBranch,
