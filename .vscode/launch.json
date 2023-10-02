@@ -6,9 +6,9 @@
   "configurations": [
 
     {
-      "name": "iPhone 14 Pro",
+      "name": "iPhone 15 Pro",
       "program": "lib/main.dart",
-      "deviceId": "920E389D-02E9-4292-8C91-5DCAB99CE338",
+      "deviceId": "55209077-4211-4232-A056-9609DEE7C4A9",
       "request": "launch",
       "type": "dart"
     },
